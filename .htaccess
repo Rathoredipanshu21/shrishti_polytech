@@ -1,10 +1,14 @@
-# Turn on the rewrite engine
 RewriteEngine On
+RewriteBase /srishti/
 
-# Ensure the request is not for an existing file
-RewriteCond %{REQUEST_FILENAME} !-f
-# Ensure the request is not for an existing directory
+# 1. Force the stylish 404 page
+# This tells the server exactly where to find the error file
+ErrorDocument 404 /srishti/404.php
+
+# 2. Logic to hide .php extension safely
+# If it's not a folder...
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Rewrite the request to the corresponding .php file
+# AND if the .php file actually exists...
+RewriteCond %{REQUEST_FILENAME}.php -f
+# Then rewrite the URL to the .php file
 RewriteRule ^(.+)$ $1.php [L,QSA]

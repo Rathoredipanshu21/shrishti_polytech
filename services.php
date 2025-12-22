@@ -38,7 +38,7 @@ include 'config/db.php';
     <!-- Used min-h-[60vh] to accommodate text on small mobile screens without clipping -->
     <div class="relative w-full min-h-[60vh] flex items-center justify-center overflow-hidden bg-[#111] py-20 md:py-0">
         <div class="absolute inset-0 opacity-60">
-            <img src="https://images.unsplash.com/photo-1581093588402-4857474d2f78?q=80&w=2070&auto=format&fit=crop" 
+            <img src="https://images.unsplash.com/photo-1712823600760-1ee072f9ef54?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHdhdGVyJTIwc3VwcGx5JTIwcGxhbnR8ZW58MHx8MHx8fDA%3D" 
                  class="w-full h-full object-cover hero-zoom" alt="Services Background">
         </div>
         <div class="absolute inset-0 bg-gradient-to-t from-[#111] via-transparent to-[#111]/80"></div>

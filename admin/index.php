@@ -94,6 +94,11 @@ if (!isset($_SESSION['admin'])) {
             font-size: 1.1rem;
             margin-right: 12px;
             text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .sidebar-link:hover i {
+            transform: scale(1.1);
         }
 
         /* Sidebar Group Label */
@@ -179,36 +184,51 @@ if (!isset($_SESSION['admin'])) {
                 
                 <div class="nav-label">Main</div>
                 <a href="dashboard.php" class="sidebar-link active" target="content-frame">
-                    <i class="fa-solid fa-chart-pie text-[#1e90b8]"></i> Dashboard
+                    <i class="fa-solid fa-gauge-high text-indigo-400"></i> Dashboard
                 </a>
 
                 <div class="nav-label">Content Management</div>
+                
                 <a href="hero_banner.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-images text-orange-400"></i> Home Banner
+                    <i class="fa-solid fa-panorama text-pink-400"></i> Home Banner
                 </a>
+                
                 <a href="add_products.php" class="sidebar-link" target="content-frame">
                     <i class="fa-solid fa-box-open text-[#D71920]"></i> Products Manager
                 </a>
+                
                 <a href="admin_services.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-gears text-blue-400"></i> Services
+                    <i class="fa-solid fa-screwdriver-wrench text-[#1e90b8]"></i> Services
                 </a>
+                
                 <a href="add_gallery.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-camera text-yellow-400"></i> Add Gallery
+                    <i class="fa-solid fa-images text-purple-400"></i> Add Gallery
+                </a>
+                
+                <a href="add_blog.php" class="sidebar-link" target="content-frame">
+                    <i class="fa-solid fa-newspaper text-yellow-400"></i> Add Blog
+                </a>
+                
+                <a href="add_clients.php" class="sidebar-link" target="content-frame">
+                    <i class="fa-solid fa-handshake text-cyan-400"></i> Add Clients
                 </a>
 
+
                 <div class="nav-label">Business</div>
+                
                 <a href="admin_enquiries.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-envelope-open-text text-green-400"></i> Client Enquiries
+                    <i class="fa-solid fa-comments text-green-400"></i> Client Enquiries
                 </a>
+                
                 <a href="orders.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-envelope-open-text text-green-400"></i> Client Orders
+                    <i class="fa-solid fa-cart-flatbed text-emerald-500"></i> Client Orders
                 </a>
                 
 
                 <div class="nav-label">Settings</div>
                 
                 <a href="change-password.php" class="sidebar-link" target="content-frame">
-                    <i class="fa-solid fa-lock text-gray-400"></i> Change Password
+                    <i class="fa-solid fa-key text-gray-400"></i> Change Password
                 </a>
 
             </nav>

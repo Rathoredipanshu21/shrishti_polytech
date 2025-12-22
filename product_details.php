@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_enquiry'])) {
 
 // Fetch Product Details
 if (!isset($_GET['id'])) {
-    header("Location: products.php");
+    header("Location: products");
     exit();
 }
 

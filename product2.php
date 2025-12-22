@@ -35,7 +35,7 @@ include 'config/db.php';
             
             <?php 
             // CHANGED: Added LIMIT 4 to show only 4 products
-            $sql = "SELECT * FROM products ";
+            $sql = "SELECT * FROM products ORDER BY id DESC LIMIT 4 ";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {

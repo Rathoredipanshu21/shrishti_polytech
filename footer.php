@@ -24,7 +24,6 @@ if(isset($conn)) {
 // =========================================================
 // 2. Set Fallbacks (Matching Srishti Polytech Info)
 // =========================================================
-$address = $settings['address'] ?? 'Pandey Niwash, Gopal Nagar, Manaitand, Dhanbad, Jharkhand (826001)';
 $phone_list = $settings['phone_list'] ?? '+91-7004471859, +91-9431313684';
 $main_phone = '+91-7004471859';
 $email = $settings['email'] ?? 'srishtipolytech@gmail.com';
@@ -93,7 +92,7 @@ $email = $settings['email'] ?? 'srishtipolytech@gmail.com';
     <footer class="srishti-footer-root pt-16 pb-8 w-full">
         <div class="max-w-[1400px] w-full mx-auto px-6 lg:px-10">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 items-start">
 
                 <div>
                     <div class="mb-6">
@@ -104,11 +103,29 @@ $email = $settings['email'] ?? 'srishtipolytech@gmail.com';
                         We are a leading provider of high-quality industrial solutions. Committed to excellence, innovation, and customer satisfaction, we deliver products that build the future.
                     </p>
                     
-                    <div class="flex space-x-3">
-                        <a href="#" class="srishti-social-btn"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="srishti-social-btn"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="srishti-social-btn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="srishti-social-btn"><i class="fab fa-whatsapp"></i></a>
+                    <div class="flex space-x-3 mb-8">
+                        <a href="https://www.facebook.com/srishtipolytech" class="srishti-social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/srishtipolytech" class="srishti-social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="" class="srishti-social-btn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://wa.me/917004471859?text=Hi%20Srishti%20Polytech%2C%20I%20am%20interested%20in%20your%20services." class="srishti-social-btn"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+
+                    <div class="space-y-3 border-t border-gray-800 pt-6">
+                         <div class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-[#D71920]"></i>
+                            <div class="flex flex-col text-sm">
+                                <?php 
+                                    $phones = explode(',', $phone_list);
+                                    foreach($phones as $ph) {
+                                        echo '<a href="tel:'.trim($ph).'" class="hover:text-white transition-colors">'.trim($ph).'</a>';
+                                    }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-[#D71920]"></i>
+                            <a href="mailto:<?php echo htmlspecialchars($email); ?>" class="text-sm hover:text-white transition-colors break-all"><?php echo htmlspecialchars($email); ?></a>
+                        </div>
                     </div>
                 </div>
 
@@ -125,27 +142,31 @@ $email = $settings['email'] ?? 'srishtipolytech@gmail.com';
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-bold text-white mb-6 srishti-heading-line">Get In Touch</h3>
-                    <ul class="space-y-4 text-sm">
+                    <h3 class="text-lg font-bold text-white mb-6 srishti-heading-line">Our Locations</h3>
+                    <ul class="space-y-5 text-sm">
+                        
                         <li class="flex items-start">
-                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#D71920]"></i>
-                            <span class="break-words w-full pr-4"><?php echo htmlspecialchars($address); ?></span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-phone-alt mr-3 text-[#D71920]"></i>
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#D71920] flex-shrink-0"></i>
                             <div class="flex flex-col">
-                                <?php 
-                                    // Split phone list for better display
-                                    $phones = explode(',', $phone_list);
-                                    foreach($phones as $ph) {
-                                        echo '<a href="tel:'.trim($ph).'" class="hover:text-white transition-colors">'.trim($ph).'</a>';
-                                    }
-                                ?>
+                                <span class="font-bold text-white mb-1">Head Office:</span>
+                                <span class="opacity-80 leading-relaxed">Pandey Niwas, Gopal Nagar, Manaitand, Dhanbad, Jharkhand – 826001</span>
                             </div>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-envelope mr-3 text-[#D71920]"></i>
-                            <a href="mailto:<?php echo htmlspecialchars($email); ?>" class="hover:text-white transition-colors break-all"><?php echo htmlspecialchars($email); ?></a>
+
+                        <li class="flex items-start">
+                            <i class="fas fa-building mt-1 mr-3 text-[#D71920] flex-shrink-0"></i>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-white mb-1">Comm. & Support Center:</span>
+                                <span class="opacity-80 leading-relaxed">Office No. 07, 4th Floor, Center Point Mall, Katras Road, Bank More, Dhanbad, Jharkhand</span>
+                            </div>
+                        </li>
+
+                        <li class="flex items-start">
+                            <i class="fas fa-warehouse mt-1 mr-3 text-[#D71920] flex-shrink-0"></i>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-white mb-1">Store / Warehouse:</span>
+                                <span class="opacity-80 leading-relaxed">Hirak By-Pass Road, Near Holy Angel Public School, Sugiyadih, Dhanbad, Jharkhand</span>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -172,7 +193,7 @@ $email = $settings['email'] ?? 'srishtipolytech@gmail.com';
                     &copy; <?php echo date("Y"); ?> <span class="text-gray-300 font-medium">Srishti Polytech</span>. All Rights Reserved.
                 </p>
                 <p class="text-center md:text-right">
-                   Developed & Designed by <a href="https://www.systaio.com" target="_blank" rel="noopener noreferrer" class="font-medium text-[#1e90b8] hover:text-[#D71920] transition-colors">Systaio Technologies</a>
+                     Designed & Developed by <a href="https://www.systaio.com" target="_blank" rel="noopener noreferrer" class="font-medium text-[#1e90b8] hover:text-[#D71920] transition-colors">Systaio Technologies</a>
                 </p>
             </div>
 

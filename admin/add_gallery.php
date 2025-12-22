@@ -88,7 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body class="overflow-x-hidden">
 
-    <!-- Navbar -->
     <nav class="bg-[#111] text-white shadow-lg border-b-4 border-[#1e90b8]">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -108,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class="max-w-7xl mx-auto px-6 mt-10 pb-20">
         
-        <!-- Header & Add Button -->
         <div class="flex flex-col sm:flex-row justify-between items-end mb-8 gap-4" data-aos="fade-down">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800">Photo <span class="text-[#D71920]">Gallery</span></h2>
@@ -119,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </button>
         </div>
 
-        <!-- Notification -->
         <?php if (isset($_SESSION['msg'])): ?>
             <div class="mb-6 p-4 rounded-lg text-white font-medium shadow-md flex items-center gap-3 <?php echo $_SESSION['type'] == 'success' ? 'bg-green-600' : 'bg-red-600'; ?>" data-aos="fade-in">
                 <i class="fa-solid <?php echo $_SESSION['type'] == 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'; ?>"></i>
@@ -127,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <!-- Gallery Grid -->
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <?php 
             $res = $conn->query("SELECT * FROM gallery ORDER BY id DESC");
@@ -135,13 +131,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 while ($row = $res->fetch_assoc()): 
             ?>
                 <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 group relative border border-gray-100" data-aos="fade-up">
-                    <!-- Image -->
                     <div class="relative h-48 sm:h-64 overflow-hidden bg-gray-100">
                         <img src="../<?php echo $row['image_path']; ?>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     
-                    <!-- Overlay Actions -->
                     <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
                         <form method="POST" onsubmit="return confirm('Permanently delete this photo?');">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
@@ -151,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </form>
                     </div>
 
-                    <!-- Title -->
                     <div class="absolute bottom-0 left-0 w-full p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <p class="text-white text-sm font-medium truncate text-center">
                             <?php echo $row['title'] ? htmlspecialchars($row['title']) : 'No Title'; ?>
@@ -170,7 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <!-- ADD MODAL -->
     <div id="galleryModal" class="modal fixed inset-0 z-50 items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100" data-aos="zoom-in">
             <div class="bg-gradient-to-r from-[#111] to-[#333] px-6 py-4 flex justify-between items-center border-b border-[#D71920]">
@@ -180,7 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             <form method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
                 
-                <!-- Image Input -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Select Image</label>
                     <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-blue-50 hover:border-[#1e90b8] transition cursor-pointer relative group">
@@ -190,9 +181,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <span class="text-sm text-gray-500 font-medium">Click to Browse</span>
                         </div>
                     </div>
+                    
+                    <div class="mt-3 flex items-start gap-2 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                        <i class="fa-solid fa-circle-info text-yellow-600 mt-0.5 text-sm"></i>
+                        <div class="text-xs text-gray-600">
+                            <p class="font-bold text-gray-800 mb-1">Recommended Size:</p>
+                            <p>Please upload high-quality images of size <strong class="text-[#D71920]">1200x800 px</strong> (Landscape) or <strong class="text-[#D71920]">800x1200 px</strong> (Portrait).</p>
+                            <p class="mt-1"><i>Using consistent sizes makes the gallery grid look perfect!</i></p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Title Input -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Caption (Optional)</label>
                     <input type="text" name="title" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition" placeholder="e.g. Factory Inauguration">
