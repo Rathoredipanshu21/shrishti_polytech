@@ -78,12 +78,12 @@ if (empty($slides)) {
 </head>
 <body id="hero-root" class="bg-gray-100 overflow-x-hidden">
 
-    <section class="relative w-full h-[35vh] md:h-[60vh] lg:h-[80vh] overflow-hidden bg-[#111111] group">
+    <section class="relative w-full h-[25vh] sm:h-[35vh] md:h-[60vh] lg:h-[80vh] overflow-hidden bg-white group">
         
         <?php foreach ($slides as $index => $slide): ?>
             <div class="hero-slide <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>">
                 
-                <div class="absolute inset-0 overflow-hidden bg-white">
+                <div class="absolute inset-0 overflow-hidden">
                     <img src="<?php echo htmlspecialchars($slide['image_path']); ?>" 
                          alt="Hero Banner" 
                          class="w-full h-full object-contain md:object-cover md:object-center">
