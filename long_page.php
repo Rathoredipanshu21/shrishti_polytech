@@ -116,7 +116,7 @@
                 
                 <div class="w-full lg:w-5/12 relative" data-aos="fade-right">
                     <div class="absolute -top-6 -left-6 w-full h-full border-[8px] border-[#f3f4f6] rounded-xl z-0"></div>
-                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" 
+                    <img src="Assets/director.jpeg" 
                          alt="Director Srishti Polytech" 
                          class="relative z-10 rounded-lg shadow-2xl w-full h-[500px] object-cover grayscale hover:grayscale-0 transition-all duration-700">
                     

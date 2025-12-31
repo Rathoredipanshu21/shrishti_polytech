@@ -27,13 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $fileTmp = $_FILES['service_images']['tmp_name'][$i];
                 $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                 
-                // New unique name
-                $newFileName = uniqid('srv_') . '.' . $fileExt;
-                $targetFilePath = $targetDir . $newFileName;
-                $dbPath = "uploads/services/" . $newFileName; // Path for DB
-                
-                if (move_uploaded_file($fileTmp, $targetFilePath)) {
-                    $imagePaths[] = $dbPath;
+                if(!empty($fileName)){
+                    $newFileName = uniqid('srv_') . '.' . $fileExt;
+                    $targetFilePath = $targetDir . $newFileName;
+                    $dbPath = "uploads/services/" . $newFileName; 
+                    
+                    if (move_uploaded_file($fileTmp, $targetFilePath)) {
+                        $imagePaths[] = $dbPath;
+                    }
                 }
             }
         }
@@ -53,7 +54,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // 2. DELETE SERVICE
+    // 2. UPDATE SERVICE
+    if (isset($_POST['update_service'])) {
+        $id = $_POST['edit_id'];
+        $name = $conn->real_escape_string($_POST['name']);
+        $description = $conn->real_escape_string($_POST['description']);
+        
+        // Check if new images are provided
+        $imageUpdateSQL = "";
+        if (isset($_FILES['edit_service_images']) && !empty($_FILES['edit_service_images']['name'][0])) {
+            $imagePaths = [];
+            $totalFiles = count($_FILES['edit_service_images']['name']);
+            
+            for ($i = 0; $i < $totalFiles; $i++) {
+                $fileName = basename($_FILES['edit_service_images']['name'][$i]);
+                $fileTmp = $_FILES['edit_service_images']['tmp_name'][$i];
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                
+                if(!empty($fileName)){
+                    $newFileName = uniqid('srv_') . '.' . $fileExt;
+                    $targetFilePath = $targetDir . $newFileName;
+                    $dbPath = "uploads/services/" . $newFileName; 
+                    
+                    if (move_uploaded_file($fileTmp, $targetFilePath)) {
+                        $imagePaths[] = $dbPath;
+                    }
+                }
+            }
+            $imagesJson = json_encode($imagePaths);
+            $imageUpdateSQL = ", images='$imagesJson'";
+        }
+
+        $sql = "UPDATE services SET name='$name', description='$description' $imageUpdateSQL WHERE id=$id";
+        
+        if ($conn->query($sql)) {
+            $_SESSION['msg'] = "Service Updated Successfully!";
+            $_SESSION['type'] = "success";
+        } else {
+            $_SESSION['msg'] = "Error updating: " . $conn->error;
+            $_SESSION['type'] = "error";
+        }
+        header("Location: admin_services.php");
+        exit();
+    }
+
+    // 3. DELETE SERVICE
     if (isset($_POST['delete_id'])) {
         $id = $_POST['delete_id'];
         
@@ -93,11 +138,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         body { font-family: 'Poppins', sans-serif; background: #f3f4f6; }
         .modal { display: none; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
         .modal-active { display: flex; }
+        
+        /* Custom Scrollbar for Modal */
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: #f1f1f1; }
+        .modal-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        .modal-body::-webkit-scrollbar-thumb:hover { background: #1e90b8; }
     </style>
 </head>
 <body class="overflow-x-hidden">
 
-    <!-- Navbar -->
     <nav class="bg-[#111] text-white shadow-lg border-b-4 border-[#1e90b8]">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -110,7 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class="max-w-7xl mx-auto px-6 mt-10 pb-20">
         
-        <!-- Header & Add Button -->
         <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4" data-aos="fade-down">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800">Our <span class="text-[#D71920]">Services</span></h2>
@@ -121,14 +170,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </button>
         </div>
 
-        <!-- Notification -->
         <?php if (isset($_SESSION['msg'])): ?>
             <div class="mb-6 p-4 rounded text-white <?php echo $_SESSION['type'] == 'success' ? 'bg-green-600' : 'bg-red-600'; ?>" data-aos="fade-in">
                 <?php echo $_SESSION['msg']; unset($_SESSION['msg']); ?>
             </div>
         <?php endif; ?>
 
-        <!-- Services Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
             <?php 
             $res = $conn->query("SELECT * FROM services ORDER BY id DESC");
@@ -136,6 +183,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 while ($row = $res->fetch_assoc()): 
                     $images = json_decode($row['images'], true);
                     $thumb = (!empty($images) && is_array($images)) ? "../" . $images[0] : "https://via.placeholder.com/300?text=No+Image";
+                    
+                    // Prepare data safely for HTML attributes
+                    $editName = htmlspecialchars($row['name'], ENT_QUOTES);
+                    $editDesc = htmlspecialchars($row['description'], ENT_QUOTES);
             ?>
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full" data-aos="fade-up">
                     <div class="relative h-56 overflow-hidden bg-gray-100">
@@ -152,12 +203,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                         <div class="border-t border-gray-100 pt-4 flex justify-between items-center mt-auto">
                             <span class="text-xs text-gray-400 font-mono">ID: <?php echo $row['id']; ?></span>
-                            <form method="POST" onsubmit="return confirm('Delete this service?');">
-                                <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                                <button class="text-red-500 hover:text-red-700 font-semibold text-sm flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-trash-can"></i> Delete
+                            
+                            <div class="flex gap-3">
+                                <button 
+                                    onclick="openEditModal(this)"
+                                    data-id="<?php echo $row['id']; ?>"
+                                    data-name="<?php echo $editName; ?>"
+                                    data-desc="<?php echo $editDesc; ?>"
+                                    class="text-[#1e90b8] hover:text-blue-700 font-semibold text-sm flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
                                 </button>
-                            </form>
+                                
+                                <form method="POST" onsubmit="return confirm('Delete this service?');">
+                                    <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                    <button class="text-red-500 hover:text-red-700 font-semibold text-sm flex items-center gap-1 transition-colors">
+                                        <i class="fa-solid fa-trash-can"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,55 +233,114 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 
-    <!-- ADD MODAL -->
     <div id="serviceModal" class="modal fixed inset-0 z-50 items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100" data-aos="zoom-in">
-            <div class="bg-gray-900 px-6 py-4 flex justify-between items-center border-b border-[#1e90b8]">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" data-aos="zoom-in">
+            
+            <div class="bg-gray-900 px-6 py-4 flex justify-between items-center border-b border-[#1e90b8] shrink-0">
                 <h3 class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-layer-group text-[#1e90b8]"></i> Add New Service</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
-            <form method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
-                <!-- Name -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Service Name</label>
-                    <input type="text" name="name" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400" placeholder="e.g. Industrial RO Plant">
-                </div>
-
-                <!-- Images -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Service Images</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-blue-50 hover:border-[#1e90b8] transition cursor-pointer relative group">
-                        <input type="file" name="service_images[]" multiple required accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 group-hover:text-[#1e90b8] mb-2 transition-colors"></i>
-                        <p class="text-sm text-gray-500 font-medium">Drag & drop or click to upload multiple photos</p>
+            <div class="modal-body overflow-y-auto p-8 space-y-6">
+                <form method="POST" enctype="multipart/form-data">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Service Name</label>
+                        <input type="text" name="name" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400" placeholder="e.g. Industrial RO Plant">
                     </div>
-                </div>
 
-                <!-- Description -->
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Description</label>
-                    <textarea name="description" rows="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400" placeholder="Detailed description of the service..."></textarea>
-                </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Service Images</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-blue-50 hover:border-[#1e90b8] transition cursor-pointer relative group">
+                            <input type="file" name="service_images[]" multiple required accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 group-hover:text-[#1e90b8] mb-2 transition-colors"></i>
+                            <p class="text-sm text-gray-500 font-medium">Drag & drop or click to upload multiple photos</p>
+                        </div>
+                    </div>
 
-                <button type="submit" name="add_service" class="w-full bg-[#D71920] hover:bg-[#b01319] text-white py-4 rounded-lg font-bold text-lg shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-save"></i> Save Service
-                </button>
-            </form>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Description</label>
+                        <textarea name="description" rows="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400" placeholder="Detailed description of the service..."></textarea>
+                    </div>
+
+                    <button type="submit" name="add_service" class="w-full bg-[#D71920] hover:bg-[#b01319] text-white py-4 rounded-lg font-bold text-lg shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-save"></i> Save Service
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="editServiceModal" class="modal fixed inset-0 z-50 items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <div class="bg-gray-900 px-6 py-4 flex justify-between items-center border-b border-[#1e90b8] shrink-0">
+                <h3 class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-[#1e90b8]"></i> Edit Service</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="modal-body overflow-y-auto p-8 space-y-6">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="edit_id" id="edit_id">
+
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Service Name</label>
+                        <input type="text" name="name" id="edit_name" required class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Update Images (Optional)</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-blue-50 hover:border-[#1e90b8] transition cursor-pointer relative group">
+                            <input type="file" name="edit_service_images[]" multiple accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-images text-3xl text-gray-400 group-hover:text-[#1e90b8] mb-2 transition-colors"></i>
+                            <p class="text-sm text-gray-500 font-medium">Click to replace current images</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wide">Description</label>
+                        <textarea name="description" id="edit_description" rows="5" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#D71920] outline-none transition placeholder-gray-400"></textarea>
+                    </div>
+
+                    <button type="submit" name="update_service" class="w-full bg-[#1e90b8] hover:bg-[#156f8f] text-white py-4 rounded-lg font-bold text-lg shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate"></i> Update Service
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
+        
+        // Add Modal Functions
         function openModal() { document.getElementById('serviceModal').classList.add('modal-active'); }
         function closeModal() { document.getElementById('serviceModal').classList.remove('modal-active'); }
         
+        // Edit Modal Functions
+        function openEditModal(btn) {
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const desc = btn.getAttribute('data-desc');
+            
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_description').value = desc;
+            
+            document.getElementById('editServiceModal').classList.add('modal-active');
+        }
+        
+        function closeEditModal() { document.getElementById('editServiceModal').classList.remove('modal-active'); }
+        
         // Close on outside click
         window.onclick = function(event) {
-            const modal = document.getElementById('serviceModal');
-            if (event.target == modal) {
+            const addModal = document.getElementById('serviceModal');
+            const editModal = document.getElementById('editServiceModal');
+            if (event.target == addModal) {
                 closeModal();
+            }
+            if (event.target == editModal) {
+                closeEditModal();
             }
         }
     </script>

@@ -7,7 +7,8 @@ include 'config/db.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+        <link rel="icon" type="image/x-icon" href="Assets/logo.png">
+
     <meta name="description" content="Srishti Polytech is the leading Water Purification Company in Dhanbad and RO Plant Manufacturer in Jharkhand. We specialize in Industrial RO Plant Installation, ETP, STP, Mineral Water Bottling Plants, and Water Supply Plant projects across India.">
     <meta name="keywords" content="Water Purification Company in Dhanbad, RO Plant Manufacturer in Jharkhand, Industrial RO Plant Installation, Water Supply Plant, Commercial RO Plant Supplier India, Effluent Treatment Plant (ETP) manufacturer, Sewage Treatment Plant (STP) installation, Mineral Water Bottling Plant, Hemodialysis RO System, Water Cooler Supplier Dhanbad, Wastewater Treatment Company India, OEM Water Treatment Manufacturer, Industrial Water Solutions, 1000 LPH RO Plant, 5000 LPH RO Plant, Best RO Plant Service Dhanbad, Water Engineering Research, SS RO Plants, Turnkey Water Projects, Pan India Water Solutions, Industrial Water Filter, Reverse Osmosis System">
     
@@ -206,7 +207,7 @@ include 'config/db.php';
                 <div class="w-full md:w-1/3 text-center" data-aos="zoom-in">
                     <div class="relative inline-block">
                         <div class="absolute inset-0 bg-[#D71920] rounded-full blur-md opacity-20 transform translate-x-2 translate-y-2"></div>
-                        <img src="https://ui-avatars.com/api/?name=Raj+Kumar&background=111&color=fff&size=256" 
+                        <img src="Assets/director.jpeg" 
                              alt="Raj Kumar Pandey - Srishti Polytech" 
                              class="relative w-48 h-48 lg:w-64 lg:h-64 rounded-full object-cover border-4 border-white shadow-lg mx-auto grayscale hover:grayscale-0 transition-all duration-500">
                     </div>
